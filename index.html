@@ -8,6 +8,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- 3D Model Viewer -->
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@500;700&display=swap');
     body {
@@ -746,25 +748,37 @@
             </div>
 
             <!-- 展示面板 -->
-            <div id="sim-result" class="w-full max-w-md bg-slate-800/60 border border-slate-700/60 p-6 rounded-xl flex flex-col items-center space-y-4 transition-all">
-              <div class="w-24 h-24 rounded-xl bg-slate-700/40 border border-slate-600/50 flex items-center justify-center text-slate-500 relative" id="result-icon-container">
-                <svg id="result-svg" class="w-12 h-12 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                </svg>
-              </div>
+           <div id="sim-result" class="w-full max-w-md bg-slate-800/60 border border-slate-700/60 p-6 rounded-xl flex flex-col items-center space-y-4 transition-all">
 
-              <div class="text-center space-y-1">
-                <h3 class="text-md font-bold text-white" id="result-title">示例：茶饮品牌精装天地盖盒</h3>
-                <p class="text-xs text-slate-300 max-w-sm italic" id="result-ai-tagline" style="display:none;"></p>
-                <p class="text-xs text-slate-400 max-w-sm" id="result-desc">主色选用新中式黛蓝，哑光质感，搭配简约香槟金烫金线条，极富高级东方雅致美感。</p>
-              </div>
+  <!-- 可拖拽 3D 预览区：目前先用公开测试模型，之后可替换成包装模型 glb -->
+  <div class="w-full h-[320px] rounded-xl overflow-hidden border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 shadow-inner">
+    <model-viewer
+      id="package-viewer"
+      src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+      alt="3D packaging preview"
+      camera-controls
+      auto-rotate
+      shadow-intensity="1"
+      exposure="1.1"
+      environment-image="neutral"
+      style="width: 100%; height: 100%;"
+    ></model-viewer>
+  </div>
 
-              <!-- 参数 -->
-              <div class="w-full grid grid-cols-2 gap-2 text-[11px] text-slate-400 pt-3 border-t border-slate-700/60">
-                <div class="text-left">长宽高：<span class="text-white font-medium" id="val-dim">220*150*80 mm</span></div>
-                <div class="text-left">打样建议：<span class="text-white font-medium" id="val-tech">350g特种纸+局部烫金</span></div>
-              </div>
-            </div>
+  <div class="text-center space-y-1">
+    <h3 class="text-md font-bold text-white" id="result-title">示例：茶饮品牌精装天地盖盒</h3>
+    <p class="text-xs text-slate-300 max-w-sm italic" id="result-ai-tagline" style="display:none;"></p>
+    <p class="text-xs text-slate-400 max-w-sm" id="result-desc">
+      可拖拽旋转查看 3D 预览。当前为功能测试模型，后续可替换为真实包装盒 GLB 模型。
+    </p>
+  </div>
+
+  <!-- 参数 -->
+  <div class="w-full grid grid-cols-2 gap-2 text-[11px] text-slate-400 pt-3 border-t border-slate-700/60">
+    <div class="text-left">长宽高：<span class="text-white font-medium" id="val-dim">220*150*80 mm</span></div>
+    <div class="text-left">打样建议：<span class="text-white font-medium" id="val-tech">350g特种纸+局部烫金</span></div>
+  </div>
+</div>
 
             <!-- AI 评估输出 -->
             <div id="ai-advisor-panel" class="hidden mt-4 w-full max-w-md bg-slate-800/90 border border-emerald-500/40 p-4 rounded-xl text-left text-xs text-emerald-200">
@@ -1341,7 +1355,7 @@
         const descEl = document.getElementById('result-desc');
         const dimEl = document.getElementById('val-dim');
         const techEl = document.getElementById('val-tech');
-        const svgEl = document.getElementById('result-svg');
+const viewerEl = document.getElementById('package-viewer');
 
         let title = "";
         let desc = "";
@@ -1374,7 +1388,9 @@
         if (descEl) descEl.innerText = desc;
         if (dimEl) dimEl.innerText = dim;
         if (techEl) techEl.innerText = tech;
-        if (svgEl) svgEl.innerHTML = svgPath;
+if (viewerEl) {
+  viewerEl.src = "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
+}
 
       }, 1500);
     }
