@@ -1503,61 +1503,76 @@ if (viewerEl) {
   import * as THREE from 'three';
   import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-  function createPackageTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1024;
-    canvas.height = 1024;
-    const ctx = canvas.getContext('2d');
+function createPackageTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 1024;
+  const ctx = canvas.getContext('2d');
 
-    // 背景渐变
-    const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
-    gradient.addColorStop(0, '#2563EB');
-    gradient.addColorStop(0.55, '#4F46E5');
-    gradient.addColorStop(1, '#7C3AED');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 1024, 1024);
+  // 背景渐变
+  const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
+  gradient.addColorStop(0, '#2563EB');
+  gradient.addColorStop(0.55, '#4F46E5');
+  gradient.addColorStop(1, '#7C3AED');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 1024, 1024);
 
-    // 装饰线
-    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-    ctx.lineWidth = 4;
-    for (let i = -200; i < 1200; i += 90) {
-      ctx.beginPath();
-      ctx.moveTo(i, 0);
-      ctx.lineTo(i + 420, 1024);
-      ctx.stroke();
-    }
+  // 装饰斜线
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+  ctx.lineWidth = 4;
+  for (let i = -200; i < 1200; i += 90) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i + 420, 1024);
+    ctx.stroke();
+  }
 
-    // 中央标签
-    ctx.fillStyle = 'rgba(255,255,255,0.95)';
-    ctx.roundRect(210, 310, 604, 330, 36);
-    ctx.fill();
+  // 左上角小标签
+  ctx.fillStyle = 'rgba(255,255,255,0.16)';
+  ctx.beginPath();
+  ctx.roundRect(70, 80, 250, 70, 28);
+  ctx.fill();
 
-    ctx.fillStyle = '#111827';
-    ctx.font = 'bold 92px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('FUJN', 512, 455);
+  ctx.fillStyle = 'white';
+  ctx.font = 'bold 30px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('SAMPLE BOX', 195, 127);
 
-    ctx.fillStyle = '#4F46E5';
-    ctx.font = 'bold 38px Arial';
-    ctx.fillText('AI PACKAGING', 512, 520);
+  // 中央白色标签底
+  ctx.fillStyle = 'rgba(255,255,255,0.96)';
+  ctx.beginPath();
+  ctx.roundRect(210, 310, 604, 330, 36);
+  ctx.fill();
 
+  // 创建贴图
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+
+  // 读取你的 logo 图片并绘制到白色标签上
+  const logoImg = new Image();
+  logoImg.crossOrigin = 'anonymous';
+  logoImg.src = './images/logo.svg';
+
+  logoImg.onload = function () {
+    // logo 尺寸与位置
+    const logoWidth = 360;
+    const logoHeight = 110;
+    const logoX = (1024 - logoWidth) / 2;
+    const logoY = 390;
+
+    ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
+
+    // 底部说明文字（可保留，也可删掉）
     ctx.fillStyle = '#64748B';
     ctx.font = '28px Arial';
+    ctx.textAlign = 'center';
     ctx.fillText('Smart Sampling Preview', 512, 575);
 
-    // 小标签
-    ctx.fillStyle = 'rgba(255,255,255,0.20)';
-    ctx.roundRect(70, 80, 250, 70, 28);
-    ctx.fill();
+    texture.needsUpdate = true;
+  };
 
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 30px Arial';
-    ctx.fillText('SAMPLE BOX', 195, 127);
-
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    return texture;
-  }
+  return texture;
+}
 
   function initPackageViewer() {
     const container = document.getElementById('package-canvas');
