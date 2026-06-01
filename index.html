@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>X·FUJN 富士智能 - 面向品牌方的 AI 设计效果图生成与打样服务平台</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@500;700&display=swap');
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+    }
+    .logo-font {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .grid-bg {
+      background-image: linear-gradient(rgba(79, 70, 229, 0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(79, 70, 229, 0.02) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .gradient-blur {
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(239, 246, 255, 0.01) 70%);
+    }
+    /* 与新Logo完美契合的亮蓝 ⇄ 靛紫 渐变色谱 */
+    .fujn-gradient {
+      background: linear-gradient(135deg, #2563EB 0%, #4F46E5 50%, #7C3AED 100%);
+    }
+    .fujn-text-gradient {
+      background: linear-gradient(135deg, #1D4ED8 0%, #4F46E5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 grid-bg min-h-screen selection:bg-indigo-600 selection:text-white">
+
+  <!-- 顶部导航 -->
+  <nav class="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20 items-center">
+        <!-- LOGO (高精度 SVG 1:1 复刻 X·FUJN 品牌资产) -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="scrollToSection('body')">
+          <div class="flex items-center space-x-2">
+            <!-- SVG 高精度重塑 X 标志 -->
+            <svg class="w-8 h-8 shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 15 L45 45 L15 75" stroke="url(#logo-grad-1)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M85 15 L55 45 L85 75" stroke="url(#logo-grad-2)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="50" cy="50" r="8" fill="#1E293B"/>
+              <defs>
+                <linearGradient id="logo-grad-1" x1="15" y1="15" x2="45" y2="45" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#2563EB"/>
+                  <stop offset="100%" stop-color="#4F46E5"/>
+                </linearGradient>
+                <linearGradient id="logo-grad-2" x1="85" y1="15" x2="55" y2="45" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#7C3AED"/>
+                  <stop offset="100%" stop-color="#4F46E5"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <!-- 几何硬朗风格字体 FUJN -->
+            <div class="flex flex-col">
+              <span class="logo-font text-2xl font-black text-slate-950 tracking-tight leading-none">F U J N</span>
+              <span class="text-[8px] text-slate-400 font-extrabold tracking-[0.22em] -mt-0.5 uppercase">富士智能打样</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 导航菜单 -->
+        <div class="hidden md:flex space-x-8 text-sm font-semibold text-slate-600">
+          <a href="#core-services" class="hover:text-indigo-600 transition-colors">服务能力</a>
+          <a href="#cases" class="hover:text-indigo-600 transition-colors">案例展示</a>
+          <a href="#advantages" class="hover:text-indigo-600 transition-colors">平台优势</a>
+          <a href="#steps" class="hover:text-indigo-600 transition-colors">合作流程</a>
+          <a href="#quick-intake" class="hover:text-indigo-600 transition-colors">提交需求</a>
+        </div>
+
+        <!-- 右侧操作栏 (中英双语切换) -->
+        <div class="flex items-center space-x-4">
+          <a href="#advisor" class="text-sm font-semibold text-slate-500 hover:text-indigo-600 transition-colors">联系顾问</a>
+          <div class="relative flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/40">
+            <button onclick="changeLanguage('zh')" id="lang-zh" class="px-3 py-1 rounded-lg text-xs font-bold transition-all bg-white text-indigo-600 shadow-sm">中</button>
+            <button onclick="changeLanguage('en')" id="lang-en" class="px-3 py-1 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-600">EN</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 首屏 Hero (大卡片背景及圆角已调整为与新Logo契合的中度微硬度角 rounded-2xl) -->
+  <section class="relative pt-6 pb-12 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- 胶囊通栏卡片背景 (设计风格微调：圆角更为精致，融入Indigo微渐变) -->
+      <div class="relative rounded-[2rem] bg-gradient-to-tr from-[#EEF2FF] via-[#EEF2FF]/60 to-[#F5F3FF] border border-indigo-100/30 px-6 py-16 md:py-28 text-center overflow-hidden shadow-sm">
+        
+        <!-- 背景渐变点缀 -->
+        <div class="absolute -top-12 -left-12 w-96 h-96 bg-indigo-400/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-12 -right-12 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- 核心中央内容 -->
+        <div class="max-w-4xl mx-auto space-y-8 relative z-10">
+          <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-indigo-600/10 text-indigo-700 text-xs font-bold tracking-wide mx-auto">
+            <span class="flex h-2 w-2 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-600"></span>
+            </span>
+            <span>无源文件品牌设计与柔性打样一体化服务</span>
+          </div>
+
+          <!-- 两行居中排版标题 (契合 Logo 的干练美学) -->
+          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[2.75rem] font-black text-slate-900 tracking-tight leading-snug max-w-4xl mx-auto">
+            <span>无源文件，也能快速生成打样效果图</span><br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 mt-2 inline-block">并高效进入实物打样流程</span>
+          </h1>
+
+          <!-- 精准定位的副标题 -->
+          <p class="text-xs sm:text-sm md:text-base text-slate-500 max-w-3xl mx-auto leading-relaxed">
+            支持通过模糊包装照片、截图或手绘参考，由 AI 快速生成包装效果图，并结合材质、工艺与尺寸需求，协助品牌方顺利进入实物打样流程，帮助更快确认方案、降低沟通与试错成本。
+          </p>
+
+          <!-- 搜索输入框自然过渡：点击即跳转至合作流程下方的轻量需求入口 -->
+          <div class="max-w-xl mx-auto bg-white p-1.5 rounded-xl shadow-lg border border-indigo-50/80 flex items-center">
+            <div class="flex-1 flex items-center px-3 space-x-2">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+              <input type="text" id="hero-quick-input" placeholder="输入您目前手头有什么（如：一张旧包装照片、手绘草图、截图等）..." class="w-full text-xs text-slate-800 placeholder-slate-400 focus:outline-none font-medium">
+            </div>
+            <button onclick="handleHeroSearch()" class="px-5 py-3 rounded-lg text-white font-bold text-xs blue-gradient hover:opacity-95 transition-all shadow-md shadow-blue-500/15 flex items-center space-x-1 shrink-0">
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              <span>生成打样效果图</span>
+            </button>
+          </div>
+
+          <!-- 精简的核心路径按钮 -->
+          <div class="flex items-center justify-center space-x-4 pt-2">
+            <a href="#core-services" class="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">查看服务能力</a>
+            <a href="#cases" class="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">查看真实案例</a>
+            <a href="#quick-intake" class="px-5 py-2.5 rounded-lg text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors">立即提交需求</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心服务能力展示 -->
+  <section id="core-services" class="py-24 bg-white relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-base font-bold text-indigo-600 tracking-wider uppercase mb-3">SERVICE CAPABILITY</h2>
+        <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          围绕品牌方落地链路的三大核心服务
+        </p>
+        <p class="mt-4 text-slate-500">
+          我们打通了“灵感搜集、设计重建、视觉渲染、工业生产”的全链路，用 AI 极大提速设计，用工业级能力交付打样。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- 卡片 1: AI 效果图生成 -->
+        <div class="bg-[#F8FAFC] rounded-xl p-8 border border-slate-100 hover:shadow-xl transition-all hover:-translate-y-1 duration-300 flex flex-col justify-between">
+          <div class="space-y-6">
+            <div class="w-14 h-14 rounded-xl bg-blue-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+              <i data-lucide="wand-2" class="w-7 h-7"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900">1. AI 智能设计与效果渲染</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">
+              只需上传您手机拍摄的产品图、随意的手绘草图，或一段设计风格描述。AI 将在数秒内为您生成高精度、多版式的包装视觉图、标签贴纸与品牌周边方案。
+            </p>
+            <ul class="space-y-2.5 text-sm text-slate-600">
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check" class="w-4 h-4 text-blue-500"></i>
+                <span>支持参考图生图 & 场景融合</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check" class="w-4 h-4 text-blue-500"></i>
+                <span>海量预设模型（瓶罐、礼盒、袋装）</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check" class="w-4 h-4 text-blue-500"></i>
+                <span>极速输出，支持多重打光效果切换</span>
+              </li>
+            </ul>
+          </div>
+          <div class="pt-8 border-t border-slate-200/50 mt-6 text-xs text-slate-400">
+            <span>支持多形态渲染 · 实时色彩调试</span>
+          </div>
+        </div>
+
+        <!-- 卡片 2: 专业打样服务 -->
+        <div class="bg-[#F8FAFC] rounded-xl p-8 border border-slate-100 hover:shadow-xl transition-all hover:-translate-y-1 duration-300 flex flex-col justify-between">
+          <div class="space-y-6">
+            <div class="w-14 h-14 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+              <i data-lucide="printer" class="w-7 h-7"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900">2. 工业级专业实物打样</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">
+              设计图确定后，直接一键交付打样。支持包装盒、精品礼盒、手提袋、各类贴纸、特种卡片打样。自有及合作数字化印刷厂，保证工艺材质完美落地。
+            </p>
+            <ul class="space-y-2.5 text-sm text-slate-600">
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check" class="w-4 h-4 text-indigo-500"></i>
+                <span>烫金、UV、凹凸等精细印刷工艺</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check" class="w-4 h-4 text-indigo-500"></i>
+                <span>数十种高档特种纸与纸板选择</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check" class="w-4 h-4 text-indigo-500"></i>
+                <span>起做量低至 1 个，最快 48H 寄出</span>
+              </li>
+            </ul>
+          </div>
+          <div class="pt-8 border-t border-slate-200/50 mt-6 text-xs text-slate-400">
+            <span>配备20年经验印前结构工程师介入</span>
+          </div>
+        </div>
+
+        <!-- 卡片 3: 无需源文件方案 -->
+        <div class="bg-[#F8FAFC] rounded-xl p-8 border border-slate-100 hover:shadow-xl transition-all hover:-translate-y-1 duration-300 flex flex-col justify-between">
+          <div class="space-y-6">
+            <div class="w-14 h-14 rounded-xl bg-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20">
+              <i data-lucide="refresh-cw" class="w-7 h-7"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900">3. 无源文件重建与数字化打样</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">
+              最懂品牌方和工厂的中间翻译官。无需复杂的 CAD 刀模图、矢量 LOGO 和三维建模文件。我们用 AI 自动解析和重建低清旧图档、模糊包装标识，平滑衔接高档打样印刷。
+            </p>
+            <ul class="space-y-2.5 text-sm text-slate-600">
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check" class="w-4 h-4 text-purple-500"></i>
+                <span>模糊旧照细节修复与版型还原</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check" class="w-4 h-4 text-purple-500"></i>
+                <span>自动匹配常规包装长宽高尺寸规格</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <i data-lucide="check" class="w-4 h-4 text-purple-500"></i>
+                <span>支持多种烫金与浮雕起鼓物理仿真</span>
+              </li>
+            </ul>
+          </div>
+          <div class="pt-8 border-t border-slate-200/50 mt-6 text-xs text-slate-400">
+            <span>提供可交付印刷工厂的 AI/PDF 高清矢量源文件</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 案例展示区 -->
+  <section id="cases" class="py-24 bg-[#F8FAFC] border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- 头部 -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16">
+        <div>
+          <span class="text-indigo-600 font-bold text-sm tracking-wider uppercase">REAL CASES</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">
+            案例展示：看见品牌落地的真实可能
+          </h2>
+          <p class="mt-3 text-slate-500 max-w-2xl text-sm leading-relaxed">
+            我们不仅仅能产出绚丽的效果图，更能做到“所见即所得”的打样。以下为真实案例的能力转化链路。
+          </p>
+        </div>
+
+        <!-- 分类筛选器 -->
+        <div class="flex flex-wrap gap-2 mt-6 md:mt-0" id="filter-container">
+          <button onclick="filterCases('all')" class="case-tab px-4 py-2 rounded-lg bg-indigo-600 text-white text-xs font-bold transition-all shadow-sm">全部案例</button>
+          <button onclick="filterCases('pkg')" class="case-tab px-4 py-2 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium hover:bg-slate-200 transition-all">包装效果图</button>
+          <button onclick="filterCases('gift')" class="case-tab px-4 py-2 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium hover:bg-slate-200 transition-all">精品礼盒</button>
+          <button onclick="filterCases('rebuild')" class="case-tab px-4 py-2 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium hover:bg-slate-200 transition-all">无源文件重建</button>
+        </div>
+      </div>
+
+      <!-- 案例卡片布局 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="cases-grid">
+        <!-- 案例 1: 茶饮品牌包装升级 -->
+        <div class="case-card bg-white rounded-xl border border-slate-100 overflow-hidden hover:shadow-lg transition-all duration-300" data-category="pkg">
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">茶饮类目</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-2">茶隐之谷包装极速升级</h3>
+              </div>
+              <span class="text-xs text-slate-400">耗时: 24小时出样</span>
+            </div>
+            
+            <!-- 核心链路对比 -->
+            <div class="grid grid-cols-3 gap-2.5 my-4">
+              <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 text-center aspect-square flex flex-col justify-center items-center">
+                <i data-lucide="image" class="w-5 h-5 text-slate-400 mb-1"></i>
+                <span class="text-[9px] font-semibold text-slate-500">原始资料</span>
+                <span class="text-[8px] text-slate-400 mt-0.5">手机拍照包装</span>
+              </div>
+              <div class="blue-gradient text-white rounded-xl p-3 text-center aspect-square flex flex-col justify-center items-center shadow-md">
+                <i data-lucide="wand-2" class="w-5 h-5 mb-1 text-blue-100"></i>
+                <span class="text-[9px] font-semibold">AI 效果图</span>
+                <span class="text-[8px] text-blue-200 mt-0.5">材质重构与排版</span>
+              </div>
+              <div class="bg-emerald-500 text-white rounded-xl p-3 text-center aspect-square flex flex-col justify-center items-center shadow-md">
+                <i data-lucide="printer" class="w-5 h-5 mb-1 text-emerald-100"></i>
+                <span class="text-[9px] font-semibold">打样预览件</span>
+                <span class="text-[8px] text-emerald-100 mt-0.5">真纸物理打样</span>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-500 leading-relaxed mb-6">
+              品牌方仅有一张旧版手机拍摄的照片，且原始 Logo 源文件损坏。我们通过 AI 提取并优化其品牌标识轮廓，一键适配特种纸罐，完美完成物理打样交付。
+            </p>
+
+            <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+              <span class="text-xs text-slate-400">材质工艺：350g 特种纸 + 哑金压凹</span>
+              <div class="flex space-x-2">
+                <button onclick="alertModal('已成功为您登记意向！打样顾问将在10分钟内为您寄出类似材质的免费物理样卡。')" class="px-3.5 py-2 rounded-lg bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors">申请类似打样</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 案例 2: 文创礼盒打样方案 -->
+        <div class="case-card bg-white rounded-xl border border-slate-100 overflow-hidden hover:shadow-lg transition-all duration-300" data-category="gift">
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded">高端文创</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-2">“明月华章”中秋高端限定礼盒</h3>
+              </div>
+              <span class="text-xs text-slate-400">耗时: 48小时出样</span>
+            </div>
+            
+            <!-- 核心链路对比 -->
+            <div class="grid grid-cols-3 gap-2.5 my-4">
+              <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 text-center aspect-square flex flex-col justify-center items-center">
+                <i data-lucide="text-quote" class="w-5 h-5 text-slate-400 mb-1"></i>
+                <span class="text-[9px] font-semibold text-slate-500">原始资料</span>
+                <span class="text-[8px] text-slate-400 mt-0.5">纯文字想法描述</span>
+              </div>
+              <div class="blue-gradient text-white rounded-xl p-3 text-center aspect-square flex flex-col justify-center items-center shadow-md">
+                <i data-lucide="wand-2" class="w-5 h-5 mb-1 text-blue-100"></i>
+                <span class="text-[9px] font-semibold">AI 效果图</span>
+                <span class="text-[8px] text-blue-200 mt-0.5">立体光影渲染</span>
+              </div>
+              <div class="bg-emerald-500 text-white rounded-xl p-3 text-center aspect-square flex flex-col justify-center items-center shadow-md">
+                <i data-lucide="printer" class="w-5 h-5 mb-1 text-emerald-100"></i>
+                <span class="text-[9px] font-semibold">打样预览件</span>
+                <span class="text-[8px] text-emerald-100 mt-0.5">精品双开纸盒</span>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-500 leading-relaxed mb-6">
+              根据品牌方口述的“国潮手绘风格”与“双开合硬板版型”，通过 AI 迅速渲染定格，直接生成精确刀模红线交付打样，一次打样成功，缩短了反复打样修改造成的无形成本。
+            </p>
+
+            <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+              <span class="text-xs text-slate-400">材质工艺：高阶灰板裱装特种纸 + 哑金热转印</span>
+              <div class="flex space-x-2">
+                <button onclick="alertModal('已成功为您登记意向！打样顾问将在10分钟内为您寄出类似材质的免费物理样卡。')" class="px-3.5 py-2 rounded-lg bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors">申请类似打样</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 案例 3: 无源文件包装重建 -->
+        <div class="case-card bg-white rounded-xl border border-slate-100 overflow-hidden hover:shadow-lg transition-all duration-300" data-category="rebuild">
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <span class="text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded">老字号重塑</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-2">古法糕点老版复刻与数字重建</h3>
+              </div>
+              <span class="text-xs text-slate-400">耗时: 36小时出样</span>
+            </div>
+            
+            <!-- 核心链路对比 -->
+            <div class="grid grid-cols-3 gap-2.5 my-4">
+              <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 text-center aspect-square flex flex-col justify-center items-center">
+                <i data-lucide="image" class="w-5 h-5 text-slate-400 mb-1"></i>
+                <span class="text-[9px] font-semibold text-slate-500">原始资料</span>
+                <span class="text-[8px] text-slate-400 mt-0.5">破损纸箱残片</span>
+              </div>
+              <div class="blue-gradient text-white rounded-xl p-3 text-center aspect-square flex flex-col justify-center items-center shadow-md">
+                <i data-lucide="wand-2" class="w-5 h-5 mb-1 text-blue-100"></i>
+                <span class="text-[9px] font-semibold">AI 修复重构</span>
+                <span class="text-[8px] text-blue-200 mt-0.5">整体排版还原</span>
+              </div>
+              <div class="bg-emerald-500 text-white rounded-xl p-3 text-center aspect-square flex flex-col justify-center items-center shadow-md">
+                <i data-lucide="printer" class="w-5 h-5 mb-1 text-emerald-100"></i>
+                <span class="text-[9px] font-semibold">打样预览件</span>
+                <span class="text-[8px] text-emerald-100 mt-0.5">糕点手提绳提盒</span>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-500 leading-relaxed mb-6">
+              老字号由于生产年代久远，历史源文件损坏且排版设计师缺失。AI 自动捕捉斑驳表面并补齐缺失图案，极高还原度印制出古旧质感的实物样箱。
+            </p>
+
+            <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+              <span class="text-xs text-slate-400">材质工艺：瓦楞牛皮纸 + 丝网专色多色套印</span>
+              <div class="flex space-x-2">
+                <button onclick="alertModal('已成功为您登记意向！打样顾问将在10分钟内为您寄出类似材质的免费物理样卡。')" class="px-3.5 py-2 rounded-lg bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors">申请类似打样</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 案例 4: 饮品新品上市视觉探索 -->
+        <div class="case-card bg-white rounded-xl border border-slate-100 overflow-hidden hover:shadow-lg transition-all duration-300" data-category="pkg">
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <span class="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded">快消零售</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-2">新式苏打水概念设计与打样</h3>
+              </div>
+              <span class="text-xs text-slate-400">耗时: 24小时出样</span>
+            </div>
+            
+            <!-- 核心链路对比 -->
+            <div class="grid grid-cols-3 gap-2.5 my-4">
+              <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 text-center aspect-square flex flex-col justify-center items-center">
+                <i data-lucide="image" class="w-5 h-5 text-slate-400 mb-1"></i>
+                <span class="text-[9px] font-semibold text-slate-500">原始资料</span>
+                <span class="text-[8px] text-slate-400 mt-0.5">简易标签截图</span>
+              </div>
+              <div class="blue-gradient text-white rounded-xl p-3 text-center aspect-square flex flex-col justify-center items-center shadow-md">
+                <i data-lucide="wand-2" class="w-5 h-5 mb-1 text-blue-100"></i>
+                <span class="text-[9px] font-semibold">AI 材质生成</span>
+                <span class="text-[8px] text-blue-200 mt-0.5">渐变瓶身材质</span>
+              </div>
+              <div class="bg-emerald-500 text-white rounded-xl p-3 text-center aspect-square flex flex-col justify-center items-center shadow-md">
+                <i data-lucide="printer" class="w-5 h-5 mb-1 text-emerald-100"></i>
+                <span class="text-[9px] font-semibold">打样预览件</span>
+                <span class="text-[8px] text-emerald-100 mt-0.5">玻璃瓶身真样</span>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-500 leading-relaxed mb-6">
+              针对新零售快消品的短周期特征，AI 渲染出 6 款不同玻璃渐变工艺和标签贴标的位置效果，最后选出最具货架吸睛力的一款并快速完成 1:1 玻璃瓶套标实样交付。
+            </p>
+
+            <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+              <span class="text-xs text-slate-400">材质工艺：特高白玻璃磨砂喷涂 + 丝网印金</span>
+              <div class="flex space-x-2">
+                <button onclick="alertModal('已成功为您登记意向！打样顾问将在10分钟内为您寄出类似材质的免费物理样卡。')" class="px-3.5 py-2 rounded-lg bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors">申请类似打样</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 平台优势 Advantages (设计微调：使用更加精致利落的圆角) -->
+  <section id="advantages" class="py-24 bg-white border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <span class="text-indigo-600 font-bold text-sm">OUR ADVANTAGES</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 mt-2">为什么传统品牌方更青睐我们？</h2>
+        <p class="text-slate-500 mt-3 text-sm">告别以往耗费在无休止排版微调中的内耗，体验高可控的服务品质</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- 优势 1 -->
+        <div class="bg-[#F8FAFC] rounded-xl p-6 border border-slate-100 shadow-sm space-y-4">
+          <div class="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
+            <i data-lucide="piggy-bank" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-md font-bold text-slate-900">节省 80% 沟通成本</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            以前由文字沟通产生的脑内视觉误差，在 AI 渲染图面前瞬间化为一致。全光影全方位透视图让品牌方管理层当天即拍板。
+          </p>
+        </div>
+
+        <!-- 优势 2 -->
+        <div class="bg-[#F8FAFC] rounded-xl p-6 border border-slate-100 shadow-sm space-y-4">
+          <div class="w-10 h-10 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-md font-bold text-slate-900">减少无效打样试错</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            在设计落地前先比对数十种特种纸纹理、烫金哑光及印刷套印效果，使实样制作一次成型，节约数千元无形打样费用。
+          </p>
+        </div>
+
+        <!-- 优势 3 -->
+        <div class="bg-[#F8FAFC] rounded-xl p-6 border border-slate-100 shadow-sm space-y-4">
+          <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <i data-lucide="cpu" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-md font-bold text-slate-900">无源文件顺利进入打样</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            无需高精矢量设计原稿，通过AI系统智能解构，实现模糊截图向印刷制版矢量规格图档的完美逆向转换。
+          </p>
+        </div>
+
+        <!-- 优势 4 -->
+        <div class="bg-[#F8FAFC] rounded-xl p-6 border border-slate-100 shadow-sm space-y-4">
+          <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <i data-lucide="truck" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-md font-bold text-slate-900">打通设计到物理实物</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            不仅是视觉大片生成，我们自带主流刀模红蓝线规范 and 印刷材质色彩预设，打样直接对标批量印刷出厂标准，真正闭环。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 合作流程 Workflow (包含 10秒提交需求 体验表单) -->
+  <section id="steps" class="py-24 bg-[#F8FAFC] border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- 合作流程标题与步骤 -->
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <span class="text-indigo-600 font-bold text-sm">WORKFLOW</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 mt-2">四步完成从想法到样品转化</h2>
+        <p class="text-slate-500 mt-3 text-sm">省时省心，把复杂的生产工艺交给数字智能，像聊天一样简单</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative mb-16">
+        <!-- 装饰连线（在中大屏幕上显示） -->
+        <div class="hidden md:block absolute top-1/2 left-[12.5%] right-[12.5%] h-0.5 border-t border-dashed border-indigo-200 -translate-y-8 -z-10"></div>
+
+        <!-- 步骤1 -->
+        <div class="bg-white rounded-xl p-6 border border-slate-100/60 relative shadow-sm flex flex-col justify-between">
+          <div class="space-y-4">
+            <span class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 text-xl font-bold flex items-center justify-center">01</span>
+            <h3 class="text-md font-bold text-slate-950">1. 提交原始需求</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              通过下方表单或直接输入诉求，支持手机随手拍照、破损旧版样盒。没有CAD刀模或矢量源稿，也可交由我们数字化重构。
+            </p>
+          </div>
+        </div>
+
+        <!-- 步骤2 -->
+        <div class="bg-white rounded-xl p-6 border border-slate-100/60 relative shadow-sm flex flex-col justify-between">
+          <div class="space-y-4">
+            <span class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 text-xl font-bold flex items-center justify-center">02</span>
+            <h3 class="text-md font-bold text-slate-950">2. AI 生成效果方案</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              AI 针对多种材质（卡纸、精品灰板纸托、特种纸、玻璃器皿）极速渲染出多角度、具有自然漫反射光影的高清方案。
+            </p>
+          </div>
+        </div>
+
+        <!-- 步骤3 -->
+        <div class="bg-white rounded-xl p-6 border border-slate-100/60 relative shadow-sm flex flex-col justify-between">
+          <div class="space-y-4">
+            <span class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 text-xl font-bold flex items-center justify-center">03</span>
+            <h3 class="text-md font-bold text-slate-950">3. 方案确认与优化</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              品牌顾问、印前结构工程师介入，在线协助您调整物理纸盒长宽高、凹凸热压印位置及起鼓厚度，完成生产前的数据确认。
+            </p>
+          </div>
+        </div>
+
+        <!-- 步骤4 -->
+        <div class="bg-white rounded-xl p-6 border border-slate-100/60 relative shadow-sm flex flex-col justify-between">
+          <div class="space-y-4">
+            <span class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 text-xl font-bold flex items-center justify-center">04</span>
+            <h3 class="text-md font-bold text-slate-950">4. 进入打样物理印制</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              定稿图纸直达柔性数字包装工厂拼版打样，最快48小时内印制装配完成，顺丰保邮给品牌方呈送极富触感的实体质样。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 10秒提交需求 快速表单 ==================== -->
+      <div id="quick-intake" class="bg-white border border-slate-150 rounded-2xl p-6 md:p-8 shadow-sm">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-md font-bold text-slate-900">10秒提交我的品牌设想</h3>
+            <p class="text-[11px] text-slate-400">无需专业文件，选择或输入您的起点，立刻帮您转换为效果方案</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <!-- 维度1: 想做什么 -->
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-2">1. 我想做什么：</label>
+            <select id="intake-shape" class="w-full p-3 rounded-xl border border-slate-200 bg-white text-xs font-semibold focus:ring-2 focus:ring-indigo-500">
+              <option value="box">卡纸包装盒 / 瓦楞纸箱</option>
+              <option value="gift">高档天地盖精品礼盒</option>
+              <option value="bottle">玻璃瓶罐 / 个护瓶</option>
+              <option value="bag">提手袋 / 特种纸袋</option>
+              <option value="sticker">不干胶贴纸 / 瓶贴标签</option>
+            </select>
+          </div>
+
+          <!-- 维度2: 目前有什么 -->
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-2">2. 我目前手头有什么：</label>
+            <select id="intake-source" class="w-full p-3 rounded-xl border border-slate-200 bg-white text-xs font-semibold focus:ring-2 focus:ring-indigo-500">
+              <option value="photo">仅有旧产品照片/手机拍照</option>
+              <option value="sketch">仅有一张手绘草图/iPad速写</option>
+              <option value="text">只有纯文字灵感/大体构思</option>
+              <option value="none">没有任何资料，希望提供创意</option>
+            </select>
+          </div>
+
+          <!-- 维度3: 希望得到什么 -->
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-2">3. 我期望获得的目标：</label>
+            <select id="intake-target" class="w-full p-3 rounded-xl border border-slate-200 bg-white text-xs font-semibold focus:ring-2 focus:ring-indigo-500">
+              <option value="render_sample">AI 高精度效果图 + 实物打样</option>
+              <option value="only_render">先出一版 AI 三维效果图比对</option>
+              <option value="rebuild">帮我无源文件完美复刻及补全</option>
+            </select>
+          </div>
+
+          <!-- 快速提交 -->
+          <div>
+            <button onclick="submitQuickIntake()" class="w-full py-3 rounded-xl text-white font-bold text-xs blue-gradient hover:opacity-95 transition-all shadow-md shadow-indigo-500/10 flex items-center justify-center space-x-1.5 h-11">
+              <i data-lucide="check-circle" class="w-4 h-4"></i>
+              <span>生成我的方案路线</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- AI 体验中心 (设计微调：更硬朗简约) -->
+  <section id="simulator" class="py-24 bg-white border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-indigo-600 font-bold text-sm">AI SIMULATION</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 mt-2">体验 AI 如何把想法转化为效果图</h2>
+        <p class="text-slate-500 mt-3 text-sm">选择不同的原始材料，结合 ✨ Gemini 深度智慧大脑，打造超越想象的高级感包装</p>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-xl overflow-hidden max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12">
+        <!-- 控制面板 -->
+        <div class="lg:col-span-5 p-8 bg-slate-50 border-r border-slate-100 flex flex-col justify-between">
+          <div class="space-y-6">
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">选择您的输入基础（起点）</label>
+              <div class="grid grid-cols-2 gap-3" id="input-type-selector">
+                <button onclick="switchInputType('photo')" id="btn-photo" class="p-3 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-slate-800 text-left transition-all flex flex-col space-y-1.5">
+                  <i data-lucide="camera" class="w-5 h-5 text-indigo-600"></i>
+                  <span class="text-xs font-bold">手绘草图/旧照片</span>
+                </button>
+                <button onclick="switchInputType('desc')" id="btn-desc" class="p-3 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 text-left transition-all flex flex-col space-y-1.5">
+                  <i data-lucide="text-quote" class="w-5 h-5 text-slate-400"></i>
+                  <span class="text-xs font-bold">文字风格描述</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 动态输入区 -->
+            <div id="dynamic-input-area" class="space-y-4">
+              <!-- 图片模式 -->
+              <div id="panel-photo" class="space-y-3">
+                <label class="block text-xs font-bold text-slate-500">模拟上传一张旧版或参考产品包装图</label>
+                <div class="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center bg-white hover:border-indigo-500 transition-colors cursor-pointer flex flex-col items-center justify-center space-y-2">
+                  <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400"></i>
+                  <span class="text-xs font-semibold text-slate-600">点击上传或拖入图片</span>
+                  <span class="text-[10px] text-slate-400">PNG, JPG, HEIC (最大 10MB)</span>
+                </div>
+                <div class="flex items-center space-x-2 pt-2">
+                  <span class="text-[10px] text-slate-400">演示用素材：</span>
+                  <button onclick="selectPreset('preset1')" id="preset1" class="px-2.5 py-1 text-xs font-medium rounded-full bg-indigo-600 text-white border border-indigo-200">茶饮品牌草图</button>
+                  <button onclick="selectPreset('preset2')" id="preset2" class="px-2.5 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200">美妆个护旧瓶</button>
+                </div>
+              </div>
+
+              <!-- 描述模式 -->
+              <div id="panel-desc" class="space-y-3 hidden">
+                <div class="flex justify-between items-center">
+                  <label class="block text-xs font-bold text-slate-500">输入您对包装的设计设设想</label>
+                  <button onclick="refinePromptWithGemini()" class="text-xs font-bold text-indigo-600 flex items-center space-x-1 hover:text-indigo-700 transition-colors" title="让 Gemini 将其转化为极富美学概念的高级 AI 咒语">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-500 animate-pulse"></i>
+                    <span>✨ AI 智能润色</span>
+                  </button>
+                </div>
+                <textarea id="text-prompt" rows="3" class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" placeholder="例如：设计一款中秋礼盒，定位高端。主色调使用深蓝色与哑光烫金，带有扁平插画风格的满月与玉兔形象，风格要新潮传统融合。"></textarea>
+                <div class="flex flex-wrap gap-1.5">
+                  <button onclick="insertTag('高级感深色调')" class="px-2 py-0.5 rounded bg-slate-100 text-[10px] text-slate-600 hover:bg-slate-200">#高级感深色调</button>
+                  <button onclick="insertTag('磨砂质感')" class="px-2 py-0.5 rounded bg-slate-100 text-[10px] text-slate-600 hover:bg-slate-200">#磨砂质感</button>
+                  <button onclick="insertTag('国潮手绘')" class="px-2 py-0.5 rounded bg-slate-100 text-[10px] text-slate-600 hover:bg-slate-200">#国潮手绘</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gemini 创意文案工坊 -->
+            <div class="bg-blue-50/50 rounded-xl p-4 border border-blue-100/50 space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-indigo-800 flex items-center space-x-1">
+                  <i data-lucide="feather" class="w-3.5 h-3.5 text-indigo-600"></i>
+                  <span>✨ AI 品牌包装文案生成</span>
+                </span>
+                <span class="text-[9px] text-indigo-500 bg-white border border-indigo-200 px-1.5 py-0.5 rounded font-medium">Gemini LLM 驱动</span>
+              </div>
+              <div class="flex space-x-2">
+                <button onclick="generateCopywritingWithGemini('新中式东方雅致')" class="flex-1 py-2 rounded-lg bg-white border border-indigo-200 hover:bg-indigo-50 text-[10px] font-bold text-indigo-700 transition-colors">
+                  ✨ 东方新潮文案
+                </button>
+                <button onclick="generateCopywritingWithGemini('法式轻奢极简')" class="flex-1 py-2 rounded-lg bg-white border border-indigo-200 hover:bg-indigo-50 text-[10px] font-bold text-indigo-700 transition-colors">
+                  ✨ 极简高端文案
+                </button>
+              </div>
+              <div id="copywriting-result" class="hidden text-xs bg-white border border-blue-100/80 p-2.5 rounded-lg text-slate-700 italic font-medium leading-relaxed">
+              </div>
+            </div>
+
+            <!-- 第二步参数 -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">呈现形态与材质</label>
+              <div class="grid grid-cols-2 gap-2">
+                <select id="select-shape" class="p-2.5 rounded-lg border border-slate-200 bg-white text-xs font-medium">
+                  <option value="box">精装天地盖硬盒</option>
+                  <option value="bottle">圆柱磨砂玻璃瓶</option>
+                  <option value="bag">提绳哑光牛皮纸袋</option>
+                </select>
+                <select id="select-style" class="p-2.5 rounded-lg border border-slate-200 bg-white text-xs font-medium">
+                  <option value="modern">现代新中式风格</option>
+                  <option value="minimalist">极简性冷淡风格</option>
+                  <option value="luxurious">轻奢法式复古</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 模拟渲染按钮 -->
+          <div class="mt-8 pt-4 border-t border-slate-200/60">
+            <button onclick="runSimulation()" class="w-full py-4 rounded-xl text-white font-bold blue-gradient hover:opacity-95 transition-all shadow-md shadow-indigo-500/10 flex items-center justify-center space-x-2">
+              <i data-lucide="play" class="w-4 h-4"></i>
+              <span>渲染生成品牌效果图</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 渲染预览展示区 -->
+        <div class="lg:col-span-7 p-8 flex flex-col justify-between bg-slate-900 text-white relative">
+          <!-- 背景装饰 -->
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+          <!-- 渲染头部信息 -->
+          <div class="flex items-center justify-between z-10">
+            <span class="text-xs text-indigo-400 font-bold tracking-wider uppercase flex items-center space-x-1.5">
+              <span class="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+              <span>RENDER PREVIEW</span>
+            </span>
+            <span class="text-xs text-slate-400" id="sim-status">已就绪</span>
+          </div>
+
+          <!-- 实时生成的图片容器 -->
+          <div class="my-6 flex flex-col items-center justify-center min-h-[300px] z-10 text-center">
+            
+            <!-- 骨架屏（生成中状态） -->
+            <div id="sim-loading" class="hidden flex flex-col items-center justify-center space-y-4">
+              <div class="relative w-16 h-16">
+                <div class="absolute inset-0 rounded-full border-4 border-indigo-500/30"></div>
+                <div class="absolute inset-0 rounded-full border-4 border-t-indigo-500 animate-spin"></div>
+              </div>
+              <p class="text-xs text-indigo-400 animate-pulse font-medium">AI 正在根据您的输入构建 3D 模型工艺细节...</p>
+            </div>
+
+            <!-- 展示面板 -->
+            <div id="sim-result" class="w-full max-w-md bg-slate-800/60 border border-slate-700/60 p-6 rounded-xl flex flex-col items-center space-y-4 transition-all">
+              <div class="w-24 h-24 rounded-xl bg-slate-700/40 border border-slate-600/50 flex items-center justify-center text-slate-500 relative" id="result-icon-container">
+                <svg id="result-svg" class="w-12 h-12 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+              </div>
+
+              <div class="text-center space-y-1">
+                <h3 class="text-md font-bold text-white" id="result-title">示例：茶饮品牌精装天地盖盒</h3>
+                <p class="text-xs text-slate-300 max-w-sm italic" id="result-ai-tagline" style="display:none;"></p>
+                <p class="text-xs text-slate-400 max-w-sm" id="result-desc">主色选用新中式黛蓝，哑光质感，搭配简约香槟金烫金线条，极富高级东方雅致美感。</p>
+              </div>
+
+              <!-- 参数 -->
+              <div class="w-full grid grid-cols-2 gap-2 text-[11px] text-slate-400 pt-3 border-t border-slate-700/60">
+                <div class="text-left">长宽高：<span class="text-white font-medium" id="val-dim">220*150*80 mm</span></div>
+                <div class="text-left">打样建议：<span class="text-white font-medium" id="val-tech">350g特种纸+局部烫金</span></div>
+              </div>
+            </div>
+
+            <!-- AI 评估输出 -->
+            <div id="ai-advisor-panel" class="hidden mt-4 w-full max-w-md bg-slate-800/90 border border-emerald-500/40 p-4 rounded-xl text-left text-xs text-emerald-200">
+              <div class="flex items-center space-x-2 text-emerald-400 font-bold mb-1.5">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>✨ Gemini AI 印前打样专家工艺推荐</span>
+              </div>
+              <p id="ai-advisor-text" class="leading-relaxed font-medium"></p>
+            </div>
+          </div>
+
+          <!-- 操作条 -->
+          <div class="flex flex-col sm:flex-row items-center justify-between border-t border-slate-800/80 pt-4 z-10 gap-3">
+            <span class="text-[11px] text-slate-400 font-medium">使用 ✨ Gemini 专家 system 进行在线工艺匹配</span>
+            <div class="flex space-x-2 w-full sm:w-auto">
+              <button onclick="getAIAdvice()" class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors flex items-center justify-center space-x-1" id="btn-get-advice">
+                <i data-lucide="message-square-code" class="w-3.5 h-3.5"></i>
+                <span>✨ 创意工艺诊断</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 智能估价 -->
+  <section id="calculator" class="py-24 bg-[#F8FAFC] border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <!-- 左侧文案 -->
+        <div class="lg:col-span-5 space-y-6">
+          <span class="text-indigo-600 font-bold text-sm tracking-wider uppercase">PRICING</span>
+          <h2 class="text-3xl font-extrabold text-slate-900 leading-tight">
+            透明公道的打样计费，<br>
+            让品牌降本增效
+          </h2>
+          <p class="text-slate-500 text-sm leading-relaxed">
+            以往在打板与和排字师傅磨合中产生的无形成本过高。我们倡导极简、标准、无忧的打样服务。费用公开透明，不带任何隐形扣费，顺丰包邮寄出样品。
+          </p>
+          <div class="bg-white border border-slate-100 rounded-2xl p-5 space-y-3 shadow-sm">
+            <div class="flex items-center space-x-2 text-xs font-bold text-slate-700">
+              <i data-lucide="package" class="w-4 h-4 text-indigo-500"></i>
+              <span>大货直减规则：</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-relaxed">
+              在本平台试样合格后，若在本厂交付制作大货（包装盒或礼盒量产），<strong>打样试样费用在货款结算中全额扣除返还</strong>。
+            </p>
+          </div>
+        </div>
+
+        <!-- 简化后的报价计算器面板 -->
+        <div class="lg:col-span-7 bg-white border border-slate-100 rounded-3xl p-8 shadow-md">
+          <h3 class="text-md font-bold text-slate-900 mb-6 flex items-center space-x-2">
+            <i data-lucide="calculator" class="text-indigo-600 w-5 h-5"></i>
+            <span>快速打样报价估算</span>
+          </h3>
+
+          <div class="space-y-5">
+            <!-- 材质 -->
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-2">1. 选择想要打样的材质类型</label>
+              <div class="grid grid-cols-3 gap-2" id="calc-material-container">
+                <button onclick="updateCalc('cardboard', 120)" class="calc-material-btn p-3 rounded-xl border-2 border-indigo-600 bg-white text-slate-800 text-xs font-semibold text-center transition-all">
+                  特种纸卡盒
+                </button>
+                <button onclick="updateCalc('grayboard', 280)" class="calc-material-btn p-3 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 text-xs font-semibold text-center transition-all">
+                  精品硬板礼盒
+                </button>
+                <button onclick="updateCalc('sticker', 50)" class="calc-material-btn p-3 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 text-xs font-semibold text-center transition-all">
+                  不干胶标签
+                </button>
+              </div>
+            </div>
+
+            <!-- 特殊工艺 -->
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-2">2. 是否增加印刷特殊印后工艺</label>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="flex items-center space-x-3 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
+                  <input type="checkbox" id="craft-gold" onchange="calcTotal()" class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                  <span class="text-xs font-medium text-slate-700 font-bold">烫金 / 烫银工艺 (+¥50)</span>
+                </label>
+                <label class="flex items-center space-x-3 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
+                  <input type="checkbox" id="craft-uv" onchange="calcTotal()" class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                  <span class="text-xs font-medium text-slate-700 font-bold">局部立体 UV 凸起 (+¥30)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 数量 -->
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-2">3. 需要制作的样件数量 (个)</label>
+              <input type="number" id="calc-quantity" value="1" min="1" max="50" oninput="calcTotal()" class="w-full p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-semibold">
+            </div>
+
+            <!-- 费用输出 -->
+            <div class="bg-slate-900 rounded-xl p-6 text-white flex flex-col sm:flex-row justify-between items-center mt-6 space-y-4 sm:space-y-0">
+              <div>
+                <span class="text-xs text-slate-400 block">打样估算制作总费用：</span>
+                <span class="text-3xl font-extrabold text-indigo-400" id="calc-result-price">¥120.00</span>
+                <span class="text-[10px] text-slate-400 block mt-1">包含：首件起制费 + 3D渲染适配 + 顺丰首发包邮寄送</span>
+              </div>
+              <button onclick="alertModal('已为您锁定报价体系排期！我们的打样工程师会为您跟进该价格方案。')" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-colors w-full sm:w-auto">
+                联系顾问锁定报价
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 底部 CTA & 真实预约顾问联系表单 (高保真深度合并，完美恢复) ==================== -->
+  <section id="advisor" class="py-24 bg-gradient-to-br from-slate-900 to-indigo-950 text-white relative overflow-hidden">
+    <div class="absolute top-1/2 left-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/4"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <!-- 左侧：CTA 专属内容 -->
+        <div class="lg:col-span-6 space-y-6">
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+            现在就把你的品牌想法，<br/>
+            变成可视化方案与实样
+          </h2>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            不管是手机随手拍照、破损的低清截图，还是尚未具象化的一句文字概念。今天起，把打样的繁杂流程交付给我们。
+          </p>
+          <div class="flex flex-wrap gap-4 pt-2">
+            <a href="#quick-intake" class="px-6 py-3.5 rounded-xl bg-indigo-600 text-white text-xs font-bold text-center hover:bg-indigo-700 transition-colors flex items-center justify-center space-x-1.5">
+              <i data-lucide="check-circle" class="w-4 h-4"></i>
+              <span>快速提需求</span>
+            </a>
+            <a href="tel:400123456" class="px-6 py-3.5 rounded-xl bg-white/10 text-white border border-white/10 text-xs font-bold text-center hover:bg-white/20 transition-colors flex items-center justify-center space-x-1.5">
+              <i data-lucide="phone" class="w-4 h-4"></i>
+              <span>电话沟通：400-123-456</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 右侧：顾问表单大卡片 (恢复原版的白底、精致卡片、立体质感) -->
+        <div class="lg:col-span-6 bg-white text-slate-800 rounded-3xl p-8 border border-slate-100 shadow-2xl">
+          <h3 class="text-lg font-bold text-slate-900 mb-1">与专属品牌顾问及印前师傅沟通</h3>
+          <p class="text-xs text-slate-400 mb-6">我们的顾问将在 10 分钟内致电您，确认免费效果图与打样排期</p>
+          
+          <form onsubmit="handleFormSubmit(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-2">品牌名称 / 您的称呼</label>
+              <input type="text" required id="form-name" placeholder="例如：李先生 / 某某茶饮公司" class="w-full p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-semibold">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-2">联系手机号码 (确保能联系上您)</label>
+              <input type="tel" required id="form-phone" placeholder="请输入您的手机号" class="w-full p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-semibold">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-2">简单描述您的需求或起点</label>
+              <textarea id="form-memo" rows="2" placeholder="例：想换版新的茶叶盒，目前只有手机拍的旧图片" class="w-full p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-medium resize-none"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-4 rounded-xl text-white font-bold blue-gradient hover:opacity-95 transition-all shadow-md shadow-indigo-500/10 text-xs">
+              提交我的打样需求，等待顾问联系
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="space-y-4">
+        <!-- 页脚 LOGO 替换 -->
+        <div class="flex items-center space-x-2">
+          <!-- SVG 高精度重塑 X 标志 -->
+          <svg class="w-7 h-7 shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 15 L45 45 L15 75" stroke="url(#footer-logo-grad-1)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M85 15 L55 45 L85 75" stroke="url(#footer-logo-grad-2)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="50" cy="50" r="8" fill="#F8FAFC"/>
+            <defs>
+              <linearGradient id="footer-logo-grad-1" x1="15" y1="15" x2="45" y2="45" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#2563EB"/>
+                <stop offset="100%" stop-color="#4F46E5"/>
+              </linearGradient>
+              <linearGradient id="footer-logo-grad-2" x1="85" y1="15" x2="55" y2="45" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#7C3AED"/>
+                <stop offset="100%" stop-color="#4F46E5"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="flex flex-col">
+            <span class="logo-font text-xl font-black text-white tracking-tight leading-none">F U J N</span>
+            <span class="text-[7px] text-slate-500 font-extrabold tracking-[0.22em] -mt-0.5 uppercase">富士智能打样</span>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500 leading-relaxed">
+          面向中国品牌方与电商卖家的“AI 智能包装设计及柔性物理打样一体化服务平台”。
+        </p>
+      </div>
+
+      <div>
+        <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-4">核心服务</h4>
+        <ul class="space-y-2 text-xs">
+          <li><a href="#simulator" class="hover:text-indigo-500 transition-colors">AI 智能设计与渲染</a></li>
+          <li><a href="#calculator" class="hover:text-indigo-500 transition-colors">物理精装打样</a></li>
+          <li><a href="#cases" class="hover:text-indigo-500 transition-colors">设计图纸补完与数字化</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-4">用户帮助</h4>
+        <ul class="space-y-2 text-xs">
+          <li><a href="#steps" class="hover:text-indigo-500 transition-colors">制作与打样流程</a></li>
+          <li><a href="#calculator" class="hover:text-indigo-500 transition-colors">透明价格体系</a></li>
+          <li><a href="#advisor" class="hover:text-indigo-500 transition-colors">大客户专属供应链通道</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-4">联系我们</h4>
+        <ul class="space-y-2 text-xs text-slate-400">
+          <li>业务咨询: support@brandcraft.ai</li>
+          <li>打样顾问专线: 400-123-456</li>
+          <li>地址: 上海市黄浦区人工智能产业示范中心 15 楼</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 页脚底部版权 -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center text-xs text-slate-600 space-y-4 md:space-y-0">
+      <span>&copy; 2026 X·FUJN BrandCraft AI Inc. 保留所有权利。沪ICP备xxxxxx号</span>
+      <div class="flex space-x-6">
+        <a href="#" class="hover:text-slate-400 transition-colors">隐私权条款</a>
+        <a href="#" class="hover:text-slate-400 transition-colors">服务协议</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 自定义弹窗 Modal（防 Alert 用） -->
+  <div id="custom-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-all">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 flex flex-col items-center text-center space-y-4">
+      <div id="modal-icon-container" class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+        <i data-lucide="check-circle" class="w-6 h-6"></i>
+      </div>
+      <h3 class="font-bold text-slate-900 text-md" id="modal-title">操作成功</h3>
+      <p id="modal-text" class="text-xs text-slate-500 leading-relaxed">系统已经收到您的请求，我们会立刻指派专属客户经理为您服务。</p>
+      <button onclick="closeModal()" class="w-full py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition-colors">
+        好的，我知道了
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // --------------------------------------------------------
+    // Gemini API 集成配置 (根据系统环境自动注入秘钥)
+    // --------------------------------------------------------
+    const apiKey = ""; // API 秘钥由宿主环境安全注入
+    const geminiModel = "gemini-2.5-flash-preview-09-2025";
+
+    // 具有指数退避逻辑的安全 API 调用封装
+    async function callGeminiAPI(payload, retries = 5, delay = 1000) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${apiKey}`;
+      
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`Gemini API 错误：${response.status} ${response.statusText}`);
+        }
+
+        return await response.json();
+      } catch (error) {
+        if (retries > 0) {
+          await new Promise(resolve => setTimeout(resolve, delay));
+          return callGeminiAPI(payload, retries - 1, delay * 2);
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    // --------------------------------------------------------
+    // AI Feature 1: ✨ AI 智能润色描述 (Prompt Refiner)
+    // --------------------------------------------------------
+    async function refinePromptWithGemini() {
+      const promptTextarea = document.getElementById('text-prompt');
+      const simpleInput = promptTextarea.value.trim();
+
+      if (!simpleInput) {
+        alertModal("请先在文本框中输入简单的设计想法或需求草稿，再点击 AI 润色哦！");
+        return;
+      }
+
+      promptTextarea.disabled = true;
+      promptTextarea.classList.add('bg-slate-100', 'animate-pulse');
+      const originalPlaceholder = promptTextarea.placeholder;
+      promptTextarea.placeholder = "✨ Gemini 正在为您深度分析品牌底蕴，扩写高端视觉意境描述...";
+
+      const systemPrompt = "你是一位殿堂级的品牌包装设计师和AI提示词专家。请将用户输入的粗糙、简单的包装创意，转化为一段画面感极强、材质纹理生动、光影立体、配色高级、适合设计大模型的专业润色扩写描述。字数控制在120字以内。直接输出润色后的中文，不要带前言。";
+
+      const payload = {
+        contents: [{
+          parts: [{ text: `将以下想法包装润色扩写：${simpleInput}` }]
+        }],
+        systemInstruction: {
+          parts: [{ text: systemPrompt }]
+        }
+      };
+
+      try {
+        const result = await callGeminiAPI(payload);
+        const refinedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        
+        if (refinedText) {
+          promptTextarea.value = refinedText.trim();
+        } else {
+          throw new Error("未能获取生成内容");
+        }
+      } catch (error) {
+        promptTextarea.value = simpleInput + "。材质采用极简艺术哑光特种纸，带有轻微的烫金哑光金箔，配合柔和的影棚顶光与现代侘寂美学风骨。";
+      } finally {
+        promptTextarea.disabled = false;
+        promptTextarea.classList.remove('bg-slate-100', 'animate-pulse');
+        promptTextarea.placeholder = originalPlaceholder;
+      }
+    }
+
+    // --------------------------------------------------------
+    // AI Feature 2: ✨ AI 品牌包装文案策划 (Brand Copywriter)
+    // --------------------------------------------------------
+    async function generateCopywritingWithGemini(styleType) {
+      const copywritingResult = document.getElementById('copywriting-result');
+      const shape = document.getElementById('select-shape').value;
+      const concept = document.getElementById('text-prompt').value || "臻礼精品系列";
+
+      copywritingResult.classList.remove('hidden');
+      copywritingResult.innerHTML = `<span class="flex items-center space-x-2 text-indigo-600 animate-pulse"><span class="h-2 w-2 bg-indigo-500 rounded-full animate-ping"></span><span>✨ Gemini 正在构思高雅文案...</span></span>`;
+
+      const systemPrompt = "你是一位极具美学洞察力的创意总监。请针对用户的包装形态和理念风格，创作3句精致高雅的品牌金句文案（每句在15字内）并推荐中英文对应排版，最后标明一句核心的主视觉宣导词。直接返回中文，排版清晰。";
+
+      const payload = {
+        contents: [{
+          parts: [{ text: `材质形态: ${shape}, 设计描述: ${concept}, 风格偏好: ${styleType}` }]
+        }],
+        systemInstruction: {
+          parts: [{ text: systemPrompt }]
+        }
+      };
+
+      try {
+        const result = await callGeminiAPI(payload);
+        const aiCopy = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (aiCopy) {
+          copywritingResult.innerHTML = `
+            <div class="text-[10px] uppercase font-bold text-indigo-600 mb-1">✨ 品牌点睛金句推荐</div>
+            <div class="text-slate-700 whitespace-pre-line leading-relaxed font-semibold">${aiCopy.trim()}</div>
+          `;
+          
+          const taglineDisplay = document.getElementById('result-ai-tagline');
+          const firstLine = aiCopy.split('\n')[0].replace(/[0-9.✨#]/g, '').trim();
+          taglineDisplay.innerText = `“ ${firstLine} ”`;
+          taglineDisplay.style.display = 'block';
+        }
+      } catch (error) {
+        copywritingResult.innerHTML = `<span class="text-slate-500">（AI 文案生成暂不可用，推荐标语：“回归真本，意由心生”）</span>`;
+      }
+    }
+
+    // --------------------------------------------------------
+    // AI Feature 3: ✨ AI 创意专家与打样评估 (Design Critique)
+    // --------------------------------------------------------
+    async function getAIAdvice() {
+      const container = document.getElementById('ai-advisor-panel');
+      const txt = document.getElementById('ai-advisor-text');
+      const btn = document.getElementById('btn-get-advice');
+
+      const title = document.getElementById('result-title').innerText;
+      const desc = document.getElementById('result-desc').innerText;
+      const style = document.getElementById('select-style').value;
+      const shape = document.getElementById('select-shape').value;
+
+      container.classList.remove('hidden');
+      txt.innerHTML = `<span class="flex items-center space-x-1.5 animate-pulse"><span class="h-2 w-2 rounded-full bg-emerald-400"></span><span>✨ 资深打样工艺师正在生成物理落地指南...</span></span>`;
+      btn.disabled = true;
+
+      const systemPrompt = "你是一位拥有20年印前生产打样经验的殿堂级工匠。请针对以下给出的AI包装效果图和设计说明，推荐最合理的【实物材质选项】、【表面印刷和热转印工艺】、以及【工厂打样防损刀模建议】。字数150字内，风格专业可靠。";
+
+      const payload = {
+        contents: [{
+          parts: [{ text: `包装产品: ${title} (${shape}), 设计说明: ${desc}, 整体风格: ${style}` }]
+        }],
+        systemInstruction: {
+          parts: [{ text: systemPrompt }]
+        }
+      };
+
+      try {
+        const result = await callGeminiAPI(payload);
+        const advice = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (advice) {
+          txt.innerHTML = `<div class="text-slate-300 leading-relaxed font-normal whitespace-pre-line">${advice.trim()}</div>`;
+        }
+      } catch (error) {
+        txt.innerHTML = `
+          <strong>材质推荐：</strong>建议采用350g 极地白高阶超细滑特种纸，以还原渲染图的温润感。<br/>
+          <strong>印前推荐：</strong>哑金套印工艺，底纸采用大底色无污染植物环保豆油墨油印。<br/>
+          <strong>拼版建议：</strong>成品天地盖建议添加高硬度瓦楞卡作为承重内托。
+        `;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // --------------------------------------------------------
+    // 页面跳转与搜索自然过渡逻辑
+    // --------------------------------------------------------
+    function handleHeroSearch() {
+      const inputVal = document.getElementById('hero-quick-input').value.trim();
+      
+      // 平滑滚动至下方的合作流程中的“轻量级快速需求表单”
+      const target = document.getElementById('quick-intake');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      // 如果首屏有输入，预载入到后续的咨询留言中作为预填信息
+      if (inputVal) {
+        const memoEl = document.getElementById('form-memo');
+        if (memoEl) {
+          memoEl.value = `我想了解的设计灵感是：${inputVal}`;
+        }
+      }
+    }
+
+    // 提交轻量快速需求
+    function submitQuickIntake() {
+      const shape = document.getElementById('intake-shape').options[document.getElementById('intake-shape').selectedIndex].text;
+      const source = document.getElementById('intake-source').options[document.getElementById('intake-source').selectedIndex].text;
+      const target = document.getElementById('intake-target').options[document.getElementById('intake-target').selectedIndex].text;
+
+      // 自动设置估价计算器和体验中心预设
+      const shapeVal = document.getElementById('intake-shape').value;
+      document.getElementById('select-shape').value = shapeVal;
+      
+      if (shapeVal === 'bottle') {
+        updateCalc('sticker', 50);
+      } else if (shapeVal === 'box' || shapeVal === 'sticker') {
+        updateCalc('cardboard', 120);
+      } else {
+        updateCalc('grayboard', 280);
+      }
+
+      // 模拟跳转到计算器并弹出提示，保证流程极度连贯
+      const calcSection = document.getElementById('calculator');
+      if (calcSection) {
+        calcSection.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      setTimeout(() => {
+        alertModal(`【您的快速路线已规划完成】\n\n・期望类型: ${shape}\n・当前起点: ${source}\n・期望目标: ${target}\n\n已自动为您调配最合理的打样材质底价及工艺。右侧智能打样计算器已就绪。`);
+      }, 800);
+    }
+
+    // 通用滚动辅助
+    function scrollToSection(sectionId) {
+      const target = document.getElementById(sectionId);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // --------------------------------------------------------
+    // 语言切换逻辑 (CN / EN Switcher)
+    // --------------------------------------------------------
+    let currentLang = 'zh';
+    function changeLanguage(lang) {
+      if (lang === currentLang) return;
+      currentLang = lang;
+      
+      const btnZh = document.getElementById('lang-zh');
+      const btnEn = document.getElementById('lang-en');
+      
+      if (lang === 'zh') {
+        btnZh.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all bg-white text-indigo-600 shadow-sm";
+        btnEn.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-600";
+        alertModal("已切换为中文语言版本。");
+      } else {
+        btnEn.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all bg-white text-indigo-600 shadow-sm";
+        btnZh.className = "px-3 py-1 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-600";
+        alertModal("Language Mode: The workspace environment has adjusted your rendering & prompt preferences to English. The AI engine is now ready to receive globalized design queries.", false);
+      }
+    }
+
+    // --------------------------------------------------------
+    // 传统打样计算器与状态逻辑
+    // --------------------------------------------------------
+    let currentInputType = 'photo';
+    let currentPreset = 'preset1';
+    let activePriceBase = 120; // 默认材质基础计费（卡纸）
+
+    function switchInputType(type) {
+      currentInputType = type;
+      const btnPhoto = document.getElementById('btn-photo');
+      const btnDesc = document.getElementById('btn-desc');
+      const panelPhoto = document.getElementById('panel-photo');
+      const panelDesc = document.getElementById('panel-desc');
+
+      if (type === 'photo') {
+        btnPhoto.className = "p-3 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-slate-800 text-left transition-all flex flex-col space-y-1.5";
+        btnDesc.className = "p-3 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 text-left transition-all flex flex-col space-y-1.5";
+        panelPhoto.classList.remove('hidden');
+        panelDesc.classList.add('hidden');
+      } else {
+        btnDesc.className = "p-3 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-slate-800 text-left transition-all flex flex-col space-y-1.5";
+        btnPhoto.className = "p-3 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 text-left transition-all flex flex-col space-y-1.5";
+        panelDesc.classList.remove('hidden');
+        panelPhoto.classList.add('hidden');
+      }
+    }
+
+    function selectPreset(preset) {
+      currentPreset = preset;
+      const p1 = document.getElementById('preset1');
+      const p2 = document.getElementById('preset2');
+
+      if (preset === 'preset1') {
+        p1.className = "px-2.5 py-1 text-xs font-medium rounded-full bg-indigo-600 text-white border border-blue-200";
+        p2.className = "px-2.5 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200";
+      } else {
+        p2.className = "px-2.5 py-1 text-xs font-medium rounded-full bg-indigo-600 text-white border border-blue-200";
+        p1.className = "px-2.5 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200";
+      }
+    }
+
+    // 插入快捷标签
+    function insertTag(tag) {
+      const textarea = document.getElementById('text-prompt');
+      if (textarea) {
+        textarea.value += (textarea.value ? ' ' : '') + '#' + tag;
+      }
+    }
+
+    // 模拟运行 AI 设计生成
+    function runSimulation() {
+      const loading = document.getElementById('sim-loading');
+      const result = document.getElementById('sim-result');
+      const statusText = document.getElementById('sim-status');
+      
+      const aiPanel = document.getElementById('ai-advisor-panel');
+      const tagline = document.getElementById('result-ai-tagline');
+
+      if(aiPanel) aiPanel.classList.add('hidden');
+      if(tagline) tagline.style.display = 'none';
+
+      if (result) result.classList.add('opacity-0');
+      if (loading) loading.classList.remove('hidden');
+      if (statusText) statusText.innerText = "生成中...";
+
+      setTimeout(() => {
+        if (loading) loading.classList.add('hidden');
+        if (result) result.classList.remove('opacity-0');
+        if (statusText) statusText.innerText = "生成成功";
+
+        const shape = document.getElementById('select-shape') ? document.getElementById('select-shape').value : 'box';
+        const titleEl = document.getElementById('result-title');
+        const descEl = document.getElementById('result-desc');
+        const dimEl = document.getElementById('val-dim');
+        const techEl = document.getElementById('val-tech');
+        const svgEl = document.getElementById('result-svg');
+
+        let title = "";
+        let desc = "";
+        let dim = "";
+        let tech = "";
+        let svgPath = "";
+
+        if (currentInputType === 'photo' && currentPreset === 'preset1') {
+          title = "国潮山水系列天地盖茶盒";
+          desc = "主色调提取新中式青墨色与黛绿，画面古拙考究，极佳展现特种卡纸原木质感。";
+          dim = "180*180*90 mm";
+          tech = "350g 特种卡纸 + 凹凸压印";
+          svgPath = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>';
+        } else if (currentInputType === 'photo' && currentPreset === 'preset2') {
+          title = "磨砂流金个护护肤瓶";
+          desc = "特高白精磨砂玻璃质感，标签边缘使用烫印工艺，带有强烈的轻奢高级美。";
+          dim = "50*50*120 mm";
+          tech = "玻璃喷砂 + 烫金属箔";
+          svgPath = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 4H9L8 4z"></path>';
+        } else {
+          const promptInput = document.getElementById('text-prompt') ? document.getElementById('text-prompt').value.trim() : '';
+          title = promptInput ? (promptInput.substring(0, 8) + "...概念包装") : "根据想法定制的精品盒";
+          desc = "已根据您的文案构想，智能排版并生成对应的哑光表面材质覆膜打光图。";
+          dim = "250*200*100 mm";
+          tech = "2mm工业灰板 + 烫哑金";
+          svgPath = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path>';
+        }
+
+        if (titleEl) titleEl.innerText = title;
+        if (descEl) descEl.innerText = desc;
+        if (dimEl) dimEl.innerText = dim;
+        if (techEl) techEl.innerText = tech;
+        if (svgEl) svgEl.innerHTML = svgPath;
+
+      }, 1500);
+    }
+
+    function filterCases(category) {
+      const cards = document.querySelectorAll('.case-card');
+      const tabs = document.querySelectorAll('.case-tab');
+
+      tabs.forEach(tab => {
+        if (tab.innerText.includes(category === 'all' ? '全部' : (category === 'pkg' ? '包装效果图' : (category === 'gift' ? '精品礼盒' : '无源文件')))) {
+          tab.className = "case-tab px-4 py-2 rounded-lg bg-indigo-600 text-white text-xs font-bold transition-all shadow-sm";
+        } else {
+          tab.className = "case-tab px-4 py-2 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium hover:bg-slate-200 transition-all";
+        }
+      });
+
+      cards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function updateCalc(materialType, baseCost) {
+      activePriceBase = baseCost;
+      const btns = document.querySelectorAll('.calc-material-btn');
+      
+      btns.forEach(btn => {
+        if (btn.innerText.includes(materialType === 'cardboard' ? '纸卡' : (materialType === 'grayboard' ? '硬板礼盒' : '标签'))) {
+          btn.className = "calc-material-btn p-3 rounded-xl border-2 border-indigo-600 bg-white text-slate-800 text-xs font-semibold text-center transition-all";
+        } else {
+          btn.className = "calc-material-btn p-3 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 text-xs font-semibold text-center transition-all";
+        }
+      });
+
+      calcTotal();
+    }
+
+    function calcTotal() {
+      const quantityEl = document.getElementById('calc-quantity');
+      const isGoldEl = document.getElementById('craft-gold');
+      const isUvEl = document.getElementById('craft-uv');
+      const resultPriceEl = document.getElementById('calc-result-price');
+
+      // 添加 DOM 元素防空指针保护，避免 window.onload 或未就绪时报错
+      if (!quantityEl || !resultPriceEl) return;
+
+      const quantity = parseInt(quantityEl.value) || 1;
+      const isGold = isGoldEl ? isGoldEl.checked : false;
+      const isUv = isUvEl ? isUvEl.checked : false;
+
+      let craftFee = 0;
+      if (isGold) craftFee += 50;
+      if (isUv) craftFee += 30;
+
+      const total = (activePriceBase * quantity) + (craftFee * quantity);
+      resultPriceEl.innerText = `¥${total.toFixed(2)}`;
+    }
+
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById('form-name').value;
+      const phone = document.getElementById('form-phone').value;
+      const memo = document.getElementById('form-memo').value;
+
+      alertModal(`感谢您选择 BrandCraft AI！我们已为您预约打样专家：\n\n・称呼: ${name}\n -- 电话: ${phone}\n -- 备注: ${memo}\n\n专属顾问和印前工艺大师将在10分钟内为您致电进行设计诊断。`);
+    }
+
+    function alertModal(text, isError = false) {
+      const modal = document.getElementById('custom-modal');
+      const modalText = document.getElementById('modal-text');
+      const modalTitle = document.getElementById('modal-title');
+      const iconContainer = document.getElementById('modal-icon-container');
+
+      if(!modal || !modalText) return;
+      modalText.innerText = text;
+      
+      if (isError) {
+        if(modalTitle) modalTitle.innerText = "操作提示";
+        if(iconContainer) {
+          iconContainer.className = "w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center";
+          iconContainer.innerHTML = '<i data-lucide="alert-triangle" class="w-6 h-6"></i>';
+        }
+      } else {
+        if(modalTitle) modalTitle.innerText = "操作成功";
+        if(iconContainer) {
+          iconContainer.className = "w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center";
+          iconContainer.innerHTML = '<i data-lucide="check-circle" class="w-6 h-6"></i>';
+        }
+      }
+      
+      lucide.createIcons();
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('custom-modal');
+      if(modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    window.onload = function() {
+      calcTotal();
+    };
+  </script>
+</body>
+</html>
