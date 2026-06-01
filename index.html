@@ -8,7 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- 3D Model Viewer -->
+<!-- 3D Package Preview powered by Three.js -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@500;700&display=swap');
     body {
@@ -750,26 +750,16 @@
            <div id="sim-result" class="w-full max-w-md bg-slate-800/60 border border-slate-700/60 p-6 rounded-xl flex flex-col items-center space-y-4 transition-all">
 
   <!-- 可拖拽 3D 预览区：目前先用公开测试模型，之后可替换成包装模型 glb -->
-  <div class="w-full h-[320px] rounded-xl overflow-hidden border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 shadow-inner">
-    <model-viewer
-      id="package-viewer"
-      src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-      alt="3D packaging preview"
-      camera-controls
-      auto-rotate
-      shadow-intensity="1"
-      exposure="1.1"
-      environment-image="neutral"
-      style="width: 100%; height: 100%;"
-    ></model-viewer>
-  </div>
+ <div id="package-viewer-wrap" class="w-full h-[320px] rounded-xl overflow-hidden border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 shadow-inner">
+  <div id="package-canvas" class="w-full h-full"></div>
+</div>
 
   <div class="text-center space-y-1">
     <h3 class="text-md font-bold text-white" id="result-title">示例：茶饮品牌精装天地盖盒</h3>
     <p class="text-xs text-slate-300 max-w-sm italic" id="result-ai-tagline" style="display:none;"></p>
-    <p class="text-xs text-slate-400 max-w-sm" id="result-desc">
-      可拖拽旋转查看 3D 预览。当前为功能测试模型，后续可替换为真实包装盒 GLB 模型。
-    </p>
+   <p class="text-xs text-slate-400 max-w-sm" id="result-desc">
+  可拖拽旋转查看包装盒 3D 预览，无需建模文件，也能模拟包装立体展示效果。
+</p>
   </div>
 
   <!-- 参数 -->
@@ -1500,5 +1490,176 @@ if (viewerEl) {
       calcTotal();
     };
   </script>
+  <script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+  import * as THREE from 'three';
+  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+  function createPackageTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 1024;
+    const ctx = canvas.getContext('2d');
+
+    // 背景渐变
+    const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
+    gradient.addColorStop(0, '#2563EB');
+    gradient.addColorStop(0.55, '#4F46E5');
+    gradient.addColorStop(1, '#7C3AED');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 1024, 1024);
+
+    // 装饰线
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+    ctx.lineWidth = 4;
+    for (let i = -200; i < 1200; i += 90) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i + 420, 1024);
+      ctx.stroke();
+    }
+
+    // 中央标签
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.roundRect(210, 310, 604, 330, 36);
+    ctx.fill();
+
+    ctx.fillStyle = '#111827';
+    ctx.font = 'bold 92px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('FUJN', 512, 455);
+
+    ctx.fillStyle = '#4F46E5';
+    ctx.font = 'bold 38px Arial';
+    ctx.fillText('AI PACKAGING', 512, 520);
+
+    ctx.fillStyle = '#64748B';
+    ctx.font = '28px Arial';
+    ctx.fillText('Smart Sampling Preview', 512, 575);
+
+    // 小标签
+    ctx.fillStyle = 'rgba(255,255,255,0.20)';
+    ctx.roundRect(70, 80, 250, 70, 28);
+    ctx.fill();
+
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 30px Arial';
+    ctx.fillText('SAMPLE BOX', 195, 127);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
+  }
+
+  function initPackageViewer() {
+    const container = document.getElementById('package-canvas');
+    if (!container) return;
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      1000
+    );
+    camera.position.set(0, 1.2, 4.2);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.innerHTML = '';
+    container.appendChild(renderer.domElement);
+
+    // 灯光
+    scene.add(new THREE.AmbientLight(0xffffff, 1.1));
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
+    keyLight.position.set(3, 4, 5);
+    scene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(0x7c9cff, 0.7);
+    fillLight.position.set(-3, 2, -4);
+    scene.add(fillLight);
+
+    // 可拖拽控制
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.enablePan = false;
+    controls.minDistance = 2.8;
+    controls.maxDistance = 6;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 1.1;
+
+    // 包装盒贴图
+    const frontTexture = createPackageTexture();
+
+    // 包装盒体
+    const geometry = new THREE.BoxGeometry(2.25, 1.6, 0.9);
+
+    const materials = [
+      new THREE.MeshStandardMaterial({ color: 0x2a3555, roughness: 0.42, metalness: 0.08 }),
+      new THREE.MeshStandardMaterial({ color: 0x2a3555, roughness: 0.42, metalness: 0.08 }),
+      new THREE.MeshStandardMaterial({ color: 0x3a4670, roughness: 0.45, metalness: 0.08 }),
+      new THREE.MeshStandardMaterial({ color: 0x1f293f, roughness: 0.5, metalness: 0.05 }),
+      new THREE.MeshStandardMaterial({ map: frontTexture, roughness: 0.35, metalness: 0.08 }),
+      new THREE.MeshStandardMaterial({ color: 0x4f46e5, roughness: 0.38, metalness: 0.08 })
+    ];
+
+    const box = new THREE.Mesh(geometry, materials);
+    box.rotation.y = -0.45;
+    box.rotation.x = 0.12;
+    scene.add(box);
+
+    // 顶部盒盖细节线
+    const edges = new THREE.EdgesGeometry(geometry);
+    const line = new THREE.LineSegments(
+      edges,
+      new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.22 })
+    );
+    line.rotation.copy(box.rotation);
+    scene.add(line);
+
+    // 阴影承托
+    const shadowGeo = new THREE.CircleGeometry(1.55, 48);
+    const shadowMat = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      transparent: true,
+      opacity: 0.22
+    });
+    const shadow = new THREE.Mesh(shadowGeo, shadowMat);
+    shadow.rotation.x = -Math.PI / 2;
+    shadow.position.y = -1.02;
+    scene.add(shadow);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    function resizeRenderer() {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+
+    window.addEventListener('resize', resizeRenderer);
+  }
+
+  window.addEventListener('DOMContentLoaded', initPackageViewer);
+</script>
 </body>
 </html>
