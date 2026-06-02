@@ -69,60 +69,102 @@
     </div>
   </nav>
 
-  <!-- 首屏 Hero (大卡片背景及圆角已调整为与新Logo契合的中度微硬度角 rounded-2xl) -->
-  <section class="relative pt-6 pb-12 overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<!-- 首屏 Hero：包装打样服务入口 -->
+<section class="relative pt-6 pb-12 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <div class="relative rounded-[2rem] bg-gradient-to-tr from-[#EEF2FF] via-[#F8FAFC] to-[#F5F3FF] border border-indigo-100/30 px-6 py-12 md:px-12 md:py-16 overflow-hidden shadow-sm">
       
-      <!-- 胶囊通栏卡片背景 (设计风格微调：圆角更为精致，融入Indigo微渐变) -->
-      <div class="relative rounded-[2rem] bg-gradient-to-tr from-[#EEF2FF] via-[#EEF2FF]/60 to-[#F5F3FF] border border-indigo-100/30 px-6 py-16 md:py-28 text-center overflow-hidden shadow-sm">
-        
-        <!-- 背景渐变点缀 -->
-        <div class="absolute -top-12 -left-12 w-96 h-96 bg-indigo-400/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-12 -right-12 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl pointer-events-none"></div>
+      <!-- 背景渐变点缀 -->
+      <div class="absolute -top-12 -left-12 w-96 h-96 bg-indigo-400/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-12 -right-12 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <!-- 核心中央内容 -->
-        <div class="max-w-4xl mx-auto space-y-8 relative z-10">
-          <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-indigo-600/10 text-indigo-700 text-xs font-bold tracking-wide mx-auto">
+      <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        
+        <!-- 左侧文案区 -->
+        <div class="lg:col-span-6 space-y-7 text-center lg:text-left">
+          <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-indigo-600/10 text-indigo-700 text-xs font-bold tracking-wide mx-auto lg:mx-0">
             <span class="flex h-2 w-2 relative">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-600"></span>
             </span>
-            <span>无源文件品牌设计与柔性打样一体化服务</span>
+            <span>AI 包装设计与柔性打样一体化服务</span>
           </div>
 
-          <!-- 两行居中排版标题 (契合 Logo 的干练美学) -->
-          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[2.75rem] font-black text-slate-900 tracking-tight leading-snug max-w-4xl mx-auto">
-            <span>无源文件，也能快速生成打样效果图</span><br/>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 mt-2 inline-block">并高效进入实物打样流程</span>
+          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[2.85rem] font-black text-slate-900 tracking-tight leading-snug">
+            <span>从一张旧图开始，</span><br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 mt-2 inline-block">
+              生成包装效果图与实样
+            </span>
           </h1>
 
-          <!-- 精准定位的副标题 -->
-          <p class="text-xs sm:text-sm md:text-base text-slate-500 max-w-3xl mx-auto leading-relaxed">
-            支持通过模糊包装照片、截图或手绘参考，由 AI 快速生成包装效果图，并结合材质、工艺与尺寸需求，协助品牌方顺利进入实物打样流程，帮助更快确认方案、降低沟通与试错成本。
+          <p class="text-xs sm:text-sm md:text-base text-slate-500 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+            上传旧包装照片、截图、手绘草图或一句文字描述，快速生成包装效果图，并衔接材质、工艺、盒型与实物打样流程。
           </p>
 
-          <!-- 搜索输入框自然过渡：点击即跳转至合作流程下方的轻量需求入口 -->
-          <div class="max-w-xl mx-auto bg-white p-1.5 rounded-xl shadow-lg border border-indigo-50/80 flex items-center">
+          <!-- 搜索输入框 -->
+          <div class="max-w-xl mx-auto lg:mx-0 bg-white p-1.5 rounded-xl shadow-lg border border-indigo-50/80 flex items-center">
             <div class="flex-1 flex items-center px-3 space-x-2">
-              <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
-              <input type="text" id="hero-quick-input" placeholder="输入您目前手头有什么（如：一张旧包装照片、手绘草图、截图等）..." class="w-full text-xs text-slate-800 placeholder-slate-400 focus:outline-none font-medium">
+              <i data-lucide="package-search" class="w-4 h-4 text-slate-400"></i>
+              <input 
+                type="text" 
+                id="hero-quick-input" 
+                placeholder="输入包装需求，如：一款茶叶礼盒，目前只有旧包装照片..." 
+                class="w-full text-xs text-slate-800 placeholder-slate-400 focus:outline-none font-medium"
+              >
             </div>
-            <button onclick="handleHeroSearch()" class="px-5 py-3 rounded-lg text-white font-bold text-xs blue-gradient hover:opacity-95 transition-all shadow-md shadow-blue-500/15 flex items-center space-x-1 shrink-0">
+            <button onclick="handleHeroSearch()" class="px-5 py-3 rounded-lg text-white font-bold text-xs bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-95 transition-all shadow-md shadow-blue-500/15 flex items-center space-x-1 shrink-0">
+              <span>开始生成</span>
               <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-              <span>生成打样效果图</span>
             </button>
           </div>
 
-          <!-- 精简的核心路径按钮 -->
-          <div class="flex items-center justify-center space-x-4 pt-2">
-            <a href="#core-services" class="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">查看服务能力</a>
-            <a href="#cases" class="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">查看真实案例</a>
-            <a href="#quick-intake" class="px-5 py-2.5 rounded-lg text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors">立即提交需求</a>
+          <!-- 快捷标签 -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
+            <span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-medium text-slate-600">包装盒</span>
+            <span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-medium text-slate-600">精品礼盒</span>
+            <span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-medium text-slate-600">标签贴纸</span>
+            <span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-medium text-slate-600">实物打样</span>
+          </div>
+
+          <!-- 按钮 -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+            <a href="#core-services" class="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">
+              查看服务能力
+            </a>
+            <a href="#cases" class="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">
+              查看真实案例
+            </a>
+            <a href="#quick-intake" class="px-5 py-2.5 rounded-lg text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors">
+              立即提交需求
+            </a>
           </div>
         </div>
+
+        <!-- 右侧包装展示图 -->
+        <div class="lg:col-span-6">
+          <div class="relative">
+            <div class="absolute -inset-4 bg-indigo-500/10 rounded-[2rem] blur-3xl"></div>
+            <div class="relative bg-white/80 backdrop-blur rounded-[1.75rem] border border-white shadow-2xl p-3">
+              <img 
+                src="./images/hero-package-main.png" 
+                alt="包装打样展示图"
+                class="w-full h-auto rounded-[1.35rem] object-cover"
+              >
+            </div>
+
+            <!-- 小说明卡片 -->
+            <div class="absolute left-6 bottom-6 bg-white/90 backdrop-blur rounded-xl border border-white shadow-lg px-4 py-3 hidden sm:block">
+              <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Packaging Preview</p>
+              <p class="text-xs text-slate-700 font-bold mt-1">效果图生成 → 材质确认 → 实物打样</p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
   <!-- 核心服务能力展示 -->
   <section id="core-services" class="py-24 bg-white relative">
