@@ -70,7 +70,7 @@
   </nav>
 
 <!-- 首屏 Hero：沉浸式包装打样入口 -->
-<section class="relative min-h-[760px] overflow-hidden bg-slate-950 text-white">
+<section class="relative min-h-[760px] overflow-hidden bg-slate-950 text-white pb-24">
   <!-- 背景包装材质图 -->
   <div class="absolute inset-0">
     <img 
@@ -149,15 +149,9 @@
     </div>
   </div>
 </section>
-
-<!-- 首页到内容区的过渡层 -->
-<div class="relative h-28 bg-gradient-to-b from-slate-950 via-[#111827] to-[#F8FAFC] overflow-hidden">
-  <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/40 to-transparent"></div>
-  <div class="absolute left-1/2 top-0 -translate-x-1/2 w-[720px] h-[180px] bg-indigo-500/10 rounded-full blur-3xl"></div>
-</div>
   
   <!-- 核心服务能力展示 -->
-  <section id="core-services" class="py-24 bg-white relative">
+<section id="core-services" class="relative -mt-24 pt-0 pb-24 bg-[#F8FAFC] overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-3xl mx-auto mb-16">
         <h2 class="text-base font-bold text-indigo-600 tracking-wider uppercase mb-3">SERVICE CAPABILITY</h2>
@@ -917,7 +911,8 @@
   <section id="advisor" class="py-24 bg-gradient-to-br from-slate-900 to-indigo-950 text-white relative overflow-hidden">
     <div class="absolute top-1/2 left-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/4"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+  <div class="bg-white/90 backdrop-blur rounded-[2rem] border border-white shadow-2xl shadow-indigo-950/10 px-6 md:px-10 py-16">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         <!-- 左侧：CTA 专属内容 -->
         <div class="lg:col-span-6 space-y-6">
@@ -969,8 +964,9 @@
         </div>
       </div>
     </div>
-  </section>
-
+  </div>
+</section>
+  
 <!-- 页脚 -->
 <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-900">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
